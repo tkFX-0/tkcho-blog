@@ -9,10 +9,10 @@ export function Comments() {
   return (
     <div className="mt-8 border-t border-[var(--border)] pt-8">
       <Giscus
-        repo="tkcho/tkcho-blog"
-        repoId=""
-        category="Blog Comments"
-        categoryId=""
+        repo="tkFX-0/tkcho-blog"
+        repoId="R_kgDORZv7Aw"
+        category="General"
+        categoryId="DIC_kwDORZv7A84C3R0v"
         mapping="pathname"
         reactionsEnabled="1"
         emitMetadata="0"
