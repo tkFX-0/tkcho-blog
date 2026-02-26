@@ -1,0 +1,66 @@
+name: Sync note.com Articles
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # Every 6 hours
+  workflow_dispatch: # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run sync script
+        id: sync
+        run: |
+          OUTPUT=$(npx tsx scripts/sync-note.ts 2>&1)
+          echo "$OUTPUT"
+          # Extract created count for notification
+          CREATED=$(echo "$OUTPUT" | grep -oP 'Created: \K\d+')
+          echo "created=${CREATED:-0}" >> $GITHUB_OUTPUT
+        env:
+          NOTE_CREATOR_ID: tkcho
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet content/synced/ 2>/dev/null && git diff --cached --quiet content/synced/ 2>/dev/null || echo "changed=true" >> $GITHUB_OUTPUT
+          if [ -n "$(git ls-files --others --exclude-standard content/synced/)" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/synced/
+          git commit -m "chore: sync note.com articles"
+          git push
+
+      - name: Notify Discord (new articles synced)
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          curl -s -H "Content-Type: application/json" \
+            -d "{\"content\":\"**[tkcho-blog]** note.com 同期完了: ${CREATED} 件の新記事を追加しました。Vercel 再デプロイが開始されます。\"}" \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}"
+        env:
+          CREATED: ${{ steps.sync.outputs.created }}
+
+      - name: Notify Discord (sync failed)
+        if: failure()
+        run: |
+          curl -s -H "Content-Type: application/json" \
+            -d '{"content":"**[tkcho-blog]** note.com 同期エラーが発生しました。GitHub Actions を確認してください。"}' \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}"
