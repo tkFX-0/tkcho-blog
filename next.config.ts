@@ -1,11 +1,11 @@
 import type { NextConfig } from "next";
 
-// Velite programmatic API integration
+// Velite: dev mode uses programmatic API for watch mode
+// Production build uses "velite build" as a prebuild step (see package.json)
 const isDev = process.argv.indexOf("dev") !== -1;
-const isBuild = process.argv.indexOf("build") !== -1;
-if (!process.env.VELITE_STARTED && (isDev || isBuild)) {
+if (isDev && !process.env.VELITE_STARTED) {
   process.env.VELITE_STARTED = "1";
-  import("velite").then((m) => m.build({ watch: isDev, clean: !isDev }));
+  import("velite").then((m) => m.build({ watch: true, clean: false }));
 }
 
 const nextConfig: NextConfig = {
