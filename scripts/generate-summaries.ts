@@ -82,6 +82,8 @@ function parseFrontmatter(content: string): { frontmatter: Record<string, string
       if (value.startsWith('"') && value.endsWith('"')) {
         value = value.slice(1, -1).replace(/\\"/g, '"');
       }
+      // Empty array "[]" → treat as empty string
+      if (value === "[]") value = "";
       fm[currentKey] = value;
     } else if (line.trim().startsWith("- ") && currentKey) {
       // Array item
@@ -197,6 +199,13 @@ ${articleSummaries.join("\n---\n")}
 // MDX generation
 // ---------------------------------------------------------------------------
 
+function sanitizeMdx(content: string): string {
+  return content
+    .replace(/<br\s*>/gi, "<br />") // Fix self-closing <br> tags for MDX
+    .replace(/<hr\s*>/gi, "<hr />")
+    .replace(/<img([^>]*[^/])>/gi, "<img$1 />"); // Fix self-closing <img> tags
+}
+
 function generateSummaryMdx(
   config: (typeof CATEGORY_CONFIG)[string],
   category: string,
@@ -204,7 +213,10 @@ function generateSummaryMdx(
   articles: ParsedArticle[]
 ): string {
   const today = new Date().toISOString().split("T")[0];
-  const allTags = [...new Set(articles.flatMap((a) => a.tags))].slice(0, 10);
+  const allTags = [...new Set(articles.flatMap((a) => a.tags))]
+    .filter((t) => t && t !== "[]")
+    .map((t) => t.replace(/^#/, "")) // Remove leading # from note.com hashtags
+    .slice(0, 10);
 
   const lines = [
     "---",
@@ -230,7 +242,7 @@ function generateSummaryMdx(
     `canonical: "${SITE_URL}/posts/${config.slug}"`,
     "---",
     "",
-    content,
+    sanitizeMdx(content),
     ""
   );
 
