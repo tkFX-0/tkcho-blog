@@ -26,9 +26,9 @@ jobs:
         run: |
           OUTPUT=$(npx tsx scripts/sync-note.ts 2>&1)
           echo "$OUTPUT"
-          # Extract created count for notification
-          CREATED=$(echo "$OUTPUT" | grep -oP 'Created: \K\d+')
-          SUMMARIES=$(echo "$OUTPUT" | grep -oP 'Summary articles generated: \K\d+')
+          # Extract created count for notification (|| true prevents grep exit code 1)
+          CREATED=$(echo "$OUTPUT" | grep -oP 'Created: \K\d+' || true)
+          SUMMARIES=$(echo "$OUTPUT" | grep -oP 'Summary articles generated: \K\d+' || true)
           echo "created=${CREATED:-0}" >> $GITHUB_OUTPUT
           echo "summaries=${SUMMARIES:-0}" >> $GITHUB_OUTPUT
         env:
