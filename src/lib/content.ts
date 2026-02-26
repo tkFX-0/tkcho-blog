@@ -2,29 +2,39 @@ import { posts, synced } from "#site-content";
 
 export type Post = (typeof posts)[number] | (typeof synced)[number];
 
-/** 全記事を統合して日付降順でソート */
-export function getAllPosts(): Post[] {
+/** 全記事を統合して日付降順でソート（同期記事含む、内部用） */
+function allPosts(): Post[] {
   return [...posts, ...synced]
     .filter((p) => p.published)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
-/** slugで記事を取得 */
-export function getPostBySlug(slug: string): Post | undefined {
-  return getAllPosts().find((p) => p.slug === slug);
+/** 一覧表示用：オリジナル記事のみ（同期記事は非表示） */
+export function getAllPosts(): Post[] {
+  return allPosts().filter((p) => p.source !== "note");
 }
 
-/** カテゴリで絞り込み */
+/** slugで記事を取得（同期記事も含む、個別ページ用） */
+export function getPostBySlug(slug: string): Post | undefined {
+  return allPosts().find((p) => p.slug === slug);
+}
+
+/** 静的パス生成用：全記事のslug（同期記事含む） */
+export function getAllSlugs(): string[] {
+  return allPosts().map((p) => p.slug);
+}
+
+/** カテゴリで絞り込み（一覧用：オリジナルのみ） */
 export function getPostsByCategory(category: string): Post[] {
   return getAllPosts().filter((p) => p.category === category);
 }
 
-/** タグで絞り込み */
+/** タグで絞り込み（一覧用：オリジナルのみ） */
 export function getPostsByTag(tag: string): Post[] {
   return getAllPosts().filter((p) => p.tags.includes(tag));
 }
 
-/** 全カテゴリと記事数を取得 */
+/** 全カテゴリと記事数を取得（一覧用） */
 export function getCategoryCounts(): Record<string, number> {
   const all = getAllPosts();
   const counts = new Map<string, number>();
@@ -32,7 +42,7 @@ export function getCategoryCounts(): Record<string, number> {
   return Object.fromEntries(counts);
 }
 
-/** 全タグと記事数を取得 */
+/** 全タグと記事数を取得（一覧用） */
 export function getTagCounts(): Record<string, number> {
   const all = getAllPosts();
   const counts = new Map<string, number>();
@@ -42,7 +52,7 @@ export function getTagCounts(): Record<string, number> {
   return Object.fromEntries(counts);
 }
 
-/** 検索 (タイトル + 説明文) */
+/** 検索（一覧用：オリジナルのみ） */
 export function searchPosts(query: string): Post[] {
   const q = query.toLowerCase();
   return getAllPosts().filter(

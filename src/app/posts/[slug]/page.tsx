@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllPosts, getPostBySlug } from "@/lib/content";
+import { getAllSlugs, getPostBySlug } from "@/lib/content";
 import { MDXContent } from "@/components/mdx/MDXContent";
 import { PaidArticleTeaser } from "@/components/post/PaidArticleTeaser";
 import { LikeButton } from "@/components/interactive/LikeButton";
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
+  return getAllSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

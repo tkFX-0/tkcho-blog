@@ -4,10 +4,10 @@ import { useState, useMemo } from "react";
 import { PostCard } from "@/components/post/PostCard";
 import type { Post } from "@/lib/content";
 
-import { posts, synced } from "#site-content";
+import { posts } from "#site-content";
 
 function getAllClientPosts(): Post[] {
-  return [...posts, ...synced]
+  return [...posts]
     .filter((p) => p.published)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
