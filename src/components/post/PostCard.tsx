@@ -5,49 +5,47 @@ import { categoryLabels } from "@/lib/constants";
 
 export function PostCard({ post }: { post: Post }) {
   return (
-    <article className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 transition-shadow hover:shadow-md">
-      <div className="mb-2 flex items-center gap-2">
+    <article className="card-hover rounded-lg bg-[var(--card)] p-5">
+      <div className="mb-3 flex items-center gap-2">
         <Link
           href={`/category/${post.category}`}
-          className="rounded bg-[var(--muted)] px-2 py-0.5 text-xs font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+          className="badge badge-primary hover:opacity-80"
         >
           {categoryLabels[post.category] || post.category}
         </Link>
         {post.source === "note" && (
-          <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-300">
-            note
-          </span>
+          <span className="badge badge-note">note</span>
         )}
         {post.isPaid && (
-          <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+          <span className="badge badge-paid">
             &yen;{post.price.toLocaleString()}
           </span>
         )}
       </div>
 
       <Link href={getPostUrl(post.slug)}>
-        <h2 className="mb-2 text-lg font-bold hover:text-[var(--color-primary)]">
+        <h2 className="mb-2 text-lg font-bold leading-snug text-[var(--foreground)] transition-colors hover:text-[var(--color-primary-light)]">
           {post.title}
         </h2>
       </Link>
 
-      <p className="mb-3 line-clamp-2 text-sm text-[var(--muted-foreground)]">
+      <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
         {post.description}
       </p>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-t border-[var(--border)] pt-3">
         <time
           dateTime={post.date}
           className="text-xs text-[var(--muted-foreground)]"
         >
           {formatDate(post.date)}
         </time>
-        <div className="flex gap-1">
+        <div className="flex gap-2">
           {post.tags.slice(0, 3).map((tag) => (
             <Link
               key={tag}
               href={`/tag/${tag}`}
-              className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+              className="text-xs text-[var(--muted-foreground)] transition-colors hover:text-[var(--color-primary-light)]"
             >
               #{tag}
             </Link>

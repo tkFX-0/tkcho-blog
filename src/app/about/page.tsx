@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-bold">About</h1>
+      <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
+        <span className="inline-block h-6 w-1 rounded-full bg-[var(--color-accent)]" />
+        About
+      </h1>
 
       <div className="prose">
         <h2>tk</h2>
