@@ -200,6 +200,37 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* ===== Scrollable table wrapper (Gist-like) ===== */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.5em 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 0 0 8px 8px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 3px;
+}
+
+.table-scroll table {
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
 /* ===== Striped tables (comparison media style) ===== */
 .prose table {
   width: 100%;
@@ -217,15 +248,35 @@ body {
   font-weight: 600;
   padding: 0.65em 1em;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   border: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .prose td {
   padding: 0.6em 1em;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   border: 1px solid var(--border);
+  min-width: 100px;
+}
+
+/* First column sticky for wide tables */
+.table-scroll th:first-child,
+.table-scroll td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+.table-scroll th:first-child {
+  background: var(--heading-bg);
+}
+
+.table-scroll td:first-child {
+  background: var(--card);
+  font-weight: 600;
+  border-right: 2px solid var(--border);
 }
 
 .prose tbody tr:nth-child(odd) {
@@ -239,6 +290,204 @@ body {
 .prose tbody tr:hover {
   background: var(--highlight);
 }
+
+.table-scroll tbody tr:nth-child(odd) td:first-child {
+  background: var(--stripe-odd);
+}
+
+.table-scroll tbody tr:nth-child(even) td:first-child {
+  background: var(--stripe-even);
+}
+
+.table-scroll tbody tr:hover td:first-child {
+  background: var(--highlight);
+}
+
+/* ===== Info / Warning / Memo boxes ===== */
+.info-box, .warning-box, .memo-box, .merit-box, .demerit-box {
+  margin: 1.5em 0;
+  padding: 1em 1.2em;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.info-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid #3b82f6;
+}
+
+.dark .info-box {
+  background: #1e3a5f20;
+  border-color: #1e40af;
+  border-left-color: #60a5fa;
+}
+
+.warning-box {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-left: 4px solid #f59e0b;
+}
+
+.dark .warning-box {
+  background: #78350f20;
+  border-color: #92400e;
+  border-left-color: #fbbf24;
+}
+
+.memo-box {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--muted-foreground);
+}
+
+/* ===== Merit / Demerit boxes ===== */
+.merit-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #22c55e;
+}
+
+.dark .merit-box {
+  background: #14532d20;
+  border-color: #166534;
+  border-left-color: #4ade80;
+}
+
+.demerit-box {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-left: 4px solid #ef4444;
+}
+
+.dark .demerit-box {
+  background: #7f1d1d20;
+  border-color: #991b1b;
+  border-left-color: #f87171;
+}
+
+.merit-box .box-title, .demerit-box .box-title,
+.info-box .box-title, .warning-box .box-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.5em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+/* ===== Price tag style ===== */
+.price-tag {
+  display: inline-block;
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.2em 0.6em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.price-tag-discount {
+  display: inline-block;
+  background: #16a34a;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.2em 0.6em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* ===== Coupon box ===== */
+.coupon-box {
+  margin: 1.5em 0;
+  padding: 1.2em 1.5em;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 2px dashed #f59e0b;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.dark .coupon-box {
+  background: linear-gradient(135deg, #78350f30, #92400e30);
+  border-color: #fbbf24;
+}
+
+.coupon-code {
+  display: inline-block;
+  margin: 0.5em 0;
+  padding: 0.4em 1.5em;
+  background: var(--card);
+  border: 2px solid var(--color-gold);
+  border-radius: 6px;
+  font-family: var(--font-mono), monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+}
+
+/* ===== Step / Flow indicator ===== */
+.step-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 1em 0;
+  flex-wrap: wrap;
+}
+
+.step-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.4em 0.8em;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.step-arrow {
+  color: var(--muted-foreground);
+  font-size: 1.1em;
+}
+
+/* ===== Inline CTA within prose ===== */
+.prose .cta-inline {
+  display: block;
+  margin: 1.5em 0;
+  text-align: center;
+}
+
+.prose .cta-inline a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.85em 2.5em;
+  background: var(--color-accent);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  border-bottom: none;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(230, 57, 70, 0.3);
+}
+
+.prose .cta-inline a:hover {
+  background: #c1121f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(230, 57, 70, 0.4);
+  border-bottom: none;
+}
+
+/* ===== Evaluation marks ===== */
+.eval-excellent { color: #16a34a; font-weight: 700; } /* ◎ */
+.eval-good { color: #2563eb; font-weight: 600; }      /* ○ */
+.eval-average { color: #f59e0b; font-weight: 600; }   /* △ */
+.eval-poor { color: #ef4444; font-weight: 600; }      /* × */
 
 /* ===== Highlight marker ===== */
 .prose mark,
