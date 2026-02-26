@@ -301,6 +301,16 @@ async function main() {
   }
 
   console.log(`\nDone! Created: ${created}, Skipped: ${skipped}`);
+
+  // Generate summary articles if new articles were synced
+  if (created > 0) {
+    console.log("\nNew articles detected, generating summary articles...");
+    const { generateSummaries } = await import("./generate-summaries.js");
+    const summaryCount = await generateSummaries(true);
+    console.log(`Summary articles generated: ${summaryCount}`);
+  } else {
+    console.log("\nNo new articles, skipping summary generation.");
+  }
 }
 
 main().catch((err) => {
